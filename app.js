@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     if (url.pathname === '/') {
-        renderHtml(res, path.join(__dirname, 'public', 'home.html'));
+        renderHtml(res, path.join(__dirname, 'public', 'index.html'));
     } else if (url.pathname === '/insurance') {
         renderHtml(res, path.join(__dirname, 'public', 'insurance.html'));
     } else if (url.pathname === '/health-checkups') {
