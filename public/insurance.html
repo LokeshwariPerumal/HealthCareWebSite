@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Plans</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/insurance">Insurance Plans</a></li>
+                <li><a href="/health-checkups">Health Checkups</a></li>
+                <li><a href="/health-drinks">Health Drinks</a></li>
+                <li><a href="/cart">Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Insurance Plans</h1>
+        <ul id="insurance-plans" style="display: flex;justify-content: center; gap: 40px;"></ul>
+        <p id="message"></p>
+    </div>
+    <script>
+        fetch('/api/insurance-plans')
+            .then(response => response.json())
+            .then(data => {
+                const insurancePlansList = document.getElementById('insurance-plans');
+                data.forEach(plan => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<form class="add-to-cart-form" style="width: 240px;height:185px;background-color:skyblue;text-align: center;border: solid 1.5px;">
+                                        <input type="hidden" name="id" value="${plan.id}">
+                                        <input type="hidden" name="name" value="${plan.name}">
+                                        <input type="hidden" name="price" value="${plan.price}">
+                                        <h3 style="width: 230px;height: 45px;margin-top:11px;">${plan.name}</h3>
+                                        <p>$${plan.price}</p>
+                                        <button type="submit" style="border-radius: 6px; width: 85px;height: 30px;margin-top: 20px;">Add to Cart</button>
+                                    </form>`;
+                    insurancePlansList.appendChild(li);
+                });
+
+                document.querySelectorAll('.add-to-cart-form').forEach(form => {
+                    form.addEventListener('submit', function(event) {
+                        event.preventDefault();
+                        const formData = new FormData(this);
+                        fetch('/api/add-to-cart', {
+                            method: 'POST',
+                            body: new URLSearchParams(formData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('message').innerText = data.message;
+                            updateCartCount();
+                        });
+                    });
+                });
+
+                function updateCartCount() {
+                    fetch('/api/cart')
+                        .then(response => response.json())
+                        .then(cart => {
+                            document.getElementById('cart-count').innerText = cart.length;
+                        });
+                }
+
+                updateCartCount();
+            });
+    </script>
+</body>
+</html>

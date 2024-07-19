@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <style>
+        /* Additional styling for the cart items and remove button */
+        #cart-items li {
+            margin-bottom: 10px;
+        }
+        #cart-items li button {
+            margin-left: 10px;
+        }
+        .no-items-message {
+            font-style: italic;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/insurance">Insurance Plans</a></li>
+                <li><a href="/health-checkups">Health Checkups</a></li>
+                <li><a href="/health-drinks">Health Drinks</a></li>
+                <li><a href="/cart">Cart</a></li>
+            </ul>
+        </nav> -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" href="/">Home</a>
+                  </li>
+                <li class="nav-item ">
+                  <a class="nav-link" href="/insurance">Insurance Plans</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/health-checkups">Health Checkups</a>
+                </li>
+               
+                <li class="nav-item">
+                  <a class="nav-link" href="/health-drinks">Health Drinks</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/cart">Cart</a>
+                  </li>
+              </ul>
+            </div>
+          </nav>
+    </header>
+    <h1>Cart</h1>
+    <ul id="cart-items"></ul>
+    <p id="cart-message" class="no-items-message">No items added to the cart</p>
+    <a href="/payment" id="proceed-to-payment" class="proceed-to-payment" style="display: none;">Proceed to Payment</a>
+
+    <script>
+        fetch('/api/cart')
+            .then(response => response.json())
+            .then(data => {
+                const cartItemsList = document.getElementById('cart-items');
+                const itemsMap = new Map(); // Use a Map to track items
+
+                data.forEach(item => {
+                    if (!itemsMap.has(item.id)) { // Ensure item is not duplicated
+                        itemsMap.set(item.id, item); // Add item to Map
+                        const li = document.createElement('li');
+                        li.id = `item-${item.id}`; // Set a unique ID for each item
+                        li.innerHTML = `${item.name} - $${item.price} <button onclick="removeItem('${item.id}')">Remove</button>`;
+                        cartItemsList.appendChild(li);
+                    }
+                });
+
+                // Show or hide "Proceed to Payment" link based on cart content
+                const proceedToPaymentLink = document.getElementById('proceed-to-payment');
+                const cartMessage = document.getElementById('cart-message');
+
+                if (data.length > 0) {
+                    proceedToPaymentLink.style.display = 'block';
+                    cartMessage.style.display = 'none';
+                } else {
+                    proceedToPaymentLink.style.display = 'none';
+                    cartMessage.style.display = 'block';
+                }
+            });
+
+        function removeItem(itemId) {
+            fetch(`/api/remove-from-cart?id=${itemId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remove the item from the DOM after successful removal
+                    const itemToRemove = document.getElementById(`item-${itemId}`);
+                    if (itemToRemove) {
+                        itemToRemove.remove();
+                    }
+                    // Update "Proceed to Payment" link visibility based on remaining items
+                    const cartItems = document.querySelectorAll('#cart-items li');
+                    if (cartItems.length === 0) {
+                        document.getElementById('proceed-to-payment').style.display = 'none';
+                        document.getElementById('cart-message').style.display = 'block';
+                    }
+                } else {
+                    console.error('Failed to remove item from cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error removing item from cart:', error);
+            });
+        }
+    </script>
+</body>
+</html>

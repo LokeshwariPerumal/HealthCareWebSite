@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Drinks</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/insurance">Insurance Plans</a></li>
+                <li><a href="/health-checkups">Health Checkups</a></li>
+                <li><a href="/health-drinks">Health Drinks</a></li>
+                <li><a href="/cart">Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Health Drinks</h1>
+        <ul class="products" id="drinks-list">
+            <!-- Product items will be dynamically added here -->
+        </ul>
+        <p id="message"></p>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/health-drinks')
+                .then(response => response.json())
+                .then(data => {
+                    const drinksList = document.getElementById('drinks-list');
+                    data.forEach(drink => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<form class="add-to-cart-form">
+                                            <input type="hidden" name="id" value="${drink.id}">
+                                            <input type="hidden" name="name" value="${drink.name}">
+                                            <input type="hidden" name="price" value="${drink.price}">
+                                            <h3>${drink.name}</h3>
+                                            <p>$${drink.price}</p>
+                                            <p>${drink.description}</p>
+                                            <button type="submit">Add to Cart</button>
+                                        </form>`;
+                        drinksList.appendChild(li);
+                    });
+
+                    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            const formData = new FormData(this);
+                            fetch('/api/add-to-cart', {
+                                method: 'POST',
+                                body: new URLSearchParams(formData)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('message').innerText = data.message;
+                                updateCartCount();
+                            });
+                        });
+                    });
+
+                    function updateCartCount() {
+                        fetch('/api/cart')
+                            .then(response => response.json())
+                            .then(cart => {
+                                document.getElementById('cart-count').innerText = cart.length;
+                            });
+                    }
+
+                    updateCartCount();
+                });
+        });
+    </script>
+</body>
+</html>
