@@ -20,11 +20,13 @@
         </nav>
     </header>
     <main>
+      <div class="container insimage">
         <h1>Health Drinks</h1>
-        <ul class="products" id="drinks-list">
+        <ul class="products" style="display: flex;justify-content: center; gap: 40px;" id="drinks-list">
             <!-- Product items will be dynamically added here -->
         </ul>
         <p id="message"></p>
+      </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -34,14 +36,14 @@
                     const drinksList = document.getElementById('drinks-list');
                     data.forEach(drink => {
                         const li = document.createElement('li');
-                        li.innerHTML = `<form class="add-to-cart-form">
+                        li.innerHTML = `<form class="add-to-cart-form" style="width: 230px;height:175px;background-color:#94ed7ede;border-radius:35px;text-align: center;border: solid 1.5px;">
                                             <input type="hidden" name="id" value="${drink.id}">
                                             <input type="hidden" name="name" value="${drink.name}">
                                             <input type="hidden" name="price" value="${drink.price}">
-                                            <h3>${drink.name}</h3>
+                                            <h3 style="margin-top:13px;margin-bottom:0px;">${drink.name}</h3>
                                             <p>$${drink.price}</p>
-                                            <p>${drink.description}</p>
-                                            <button type="submit">Add to Cart</button>
+                                            <p style="margin:6px;width: 213px;height: 50px;text-align:center;font-weight: bold;">${drink.description}</p>
+                                            <button type="submit" style="border-radius: 6px; width: 85px;height: 30px;">Add to Cart</button>
                                         </form>`;
                         drinksList.appendChild(li);
                     });

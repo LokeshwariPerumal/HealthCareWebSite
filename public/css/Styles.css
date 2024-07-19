@@ -134,4 +134,13 @@ nav ul li a {
         grid-template-columns: 1fr;
     }
 }
-
+.image{
+    background-image: url(./../images/home.png);
+    width: 1200px;
+    height: 480px;
+}
+.insimage{
+    background-image: url(./../images/bgcolour.png);
+    width: 1200px;
+    height: 480px;
+}

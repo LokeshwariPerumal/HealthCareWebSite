@@ -56,11 +56,14 @@
             </div>
           </nav>
     </header>
-    <h1>Cart</h1>
-    <ul id="cart-items"></ul>
-    <p id="cart-message" class="no-items-message">No items added to the cart</p>
-    <a href="/payment" id="proceed-to-payment" class="proceed-to-payment" style="display: none;">Proceed to Payment</a>
-
+    <div class="container">
+        <h1>Cart</h1>
+        <ul id="cart-items"></ul>
+        <p id="cart-message" class="no-items-message">No items added to the cart</p>
+        <button class="btn text-center">
+            <a href="/payment" id="proceed-to-payment" class="proceed-to-payment" style="display: none;color:black;">Proceed to Payment</a>
+        </button>
+    </div>
     <script>
         fetch('/api/cart')
             .then(response => response.json())
@@ -73,7 +76,7 @@
                         itemsMap.set(item.id, item); // Add item to Map
                         const li = document.createElement('li');
                         li.id = `item-${item.id}`; // Set a unique ID for each item
-                        li.innerHTML = `${item.name} - $${item.price} <button onclick="removeItem('${item.id}')">Remove</button>`;
+                        li.innerHTML = `${item.name} - $${item.price} <button style="border-radius: 6px; width: 85px;height: 30px;" onclick="removeItem('${item.id}')">Remove</button>`;
                         cartItemsList.appendChild(li);
                     }
                 });
